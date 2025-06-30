@@ -14,11 +14,11 @@ dotenv.config();
 // Create a new task
 app.post("/tasks", async (req, res) => {
   try {
-    const { title } = req.body;
+    let { title, dueDate } = req.body;
     if (!title || title.trim() === "") {
       return res.status(400).json({ error: "Title is required" });
     }
-    const newTask = new Task({ title });
+    const newTask = new Task({ title, dueDate });
     const savedTask = await newTask.save();
     res.status(201).json(savedTask);
   } catch (err) {
@@ -38,10 +38,28 @@ app.get("/tasks", async (req, res) => {
 
 // Mark task as completed
 app.put("/tasks/:id/complete", async (req, res) => {
-  const { id } = req.params;
   try {
-    const updatedTask = await Task.findByIdAndUpdate(id, { completed: true }, { new: true });
+    const task = await Task.findByIdAndUpdate(
+      req.params.id,
+      { completed: true },
+      { new: true }
+    );
+    if (!task) return res.status(404).json({ error: "Task not found" });
+    res.status(200).json(task);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+// Update a task
+app.put("/tasks/:id", async(req, res) => {
+  const {id} = req.params;
+  const {title, dueDate} = req.body;
+  try {
+    if (!title || title.trim() === "") {
+      return res.status(400).json({ error: "Title is required" });
+    }
+    const updatedTask = await Task.findByIdAndUpdate(id, { title, dueDate }, { new: true });
     if (!updatedTask) {
       return res.status(404).json({ error: "Task not found" });
     }

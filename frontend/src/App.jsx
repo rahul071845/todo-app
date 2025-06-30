@@ -1,15 +1,16 @@
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
-import AddTask from './components/AddTask';
-import ViewTask from './components/ViewTask';
+import AddTask from './pages/AddTask';
+import ViewTask from './pages/ViewTask';
+import TaskForm from './components/TaskForm';
 
 function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<ViewTask />} />
+        <Route path="/" element={<ViewTask />}/>
         <Route path="/add" element={<AddTask />} />
       </Routes>
     </Router>
