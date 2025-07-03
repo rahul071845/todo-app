@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Base URL and credentials
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = import.meta.env.BACKEND_URL || "http://localhost:3000";
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 // Task APIs
 export const fetchTasks = () => axios.get("/tasks");

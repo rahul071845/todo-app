@@ -6,7 +6,7 @@ const connectDB = require("./db");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
-const LocalStratrgy = require("passport-local");
+const LocalStrategy = require("passport-local").Strategy;
 const User = require("./models/User.js");
 
 const taskRouter = require("./routers/task.js");
@@ -38,9 +38,19 @@ app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new LocalStratrgy(User.authenticate()));
+passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
+  console.log("🔍 Incoming request:");
+  console.log("  URL:", req.originalUrl);
+  console.log("  Method:", req.method);
+  console.log("  Cookies:", req.cookies);
+  console.log("  Session:", req.session);
+  console.log("  User:", req.user);
+  next();
+});
 
 app.use("/tasks", taskRouter);
 app.use("/user", userRouter);
