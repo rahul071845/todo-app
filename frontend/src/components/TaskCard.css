@@ -1,0 +1,136 @@
+.task-card {
+  min-height: 310px;
+  list-style: none;
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border-left: 4px solid #3498db;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.task-card.completed {
+  opacity: 0.8;
+  background-color: #f8f9fa;
+}
+
+.task-card.editing {
+  box-shadow: 0 0 0 2px #007bff;
+  border-left-color: #f39c12;
+  background-color: #f7faff;
+}
+
+.task-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5rem;
+  margin-bottom: 1.5rem;
+}
+
+.task-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.task-card.completed .task-title {
+  text-decoration: line-through;
+  color: #7f8c8d;
+  border-left-color: #27ae60;
+}
+
+.task-due-date {
+  color: #555;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.due-date-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.completed-badge {
+  display: inline-block;
+  background: #28a745;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.task-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.complete-btn {
+  background-color: #27ae60;
+  color: white;
+}
+
+.complete-btn:hover:not(:disabled) {
+  background-color: #219653;
+}
+
+.edit-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.edit-btn:hover:not(:disabled) {
+  background-color: #2980b9;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background-color: #c0392b;
+}
+
+.task-edit-form {
+  margin-top: -0.5rem;
+}
+
+@media (max-width: 480px) {
+  .task-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

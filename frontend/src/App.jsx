@@ -1,20 +1,51 @@
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import './App.css';
-import Navbar from './components/Navbar';
-import AddTask from './pages/AddTask';
-import ViewTask from './pages/ViewTask';
-import TaskForm from './components/TaskForm';
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import AddTask from "./pages/AddTask";
+import ViewTask from "./pages/ViewTask";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import PrivateRoute from "./components/PrivateRoute";
+import LandingPage from "./pages/LandingPage";
+import "./App.css";
 
 function App() {
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<ViewTask />}/>
-        <Route path="/add" element={<AddTask />} />
-      </Routes>
+      <MainLayout />
     </Router>
   );
 }
 
-export default App
+function MainLayout() {
+  const location = useLocation();
+  const hideNavbarRoutes = ["/"]; // add more routes if needed
+
+  return (
+    <>
+      {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/tasks"
+          element={
+            <PrivateRoute>
+              <ViewTask />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/add"
+          element={
+            <PrivateRoute>
+              <AddTask />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </>
+  );
+}
+
+export default App;

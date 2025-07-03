@@ -1,67 +1,101 @@
 import { useState } from "react";
 import TaskForm from "./TaskForm";
 import { completeTask, updateTask } from "../api/taskApi";
+import LoadingSpinner from "./LoadingSpinner";
+import ErrorMessage from "./ErrorMessage";
+import "./TaskCard.css";
 
 function TaskCard({ task, onDelete, onComplete }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleComplete = () => {
-    completeTask(task._id)
-      .then((res) => onComplete(res.data))
-      .catch((err) => {
-        console.error("Error marking task as completed:", err);
-      });
+  const handleComplete = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await completeTask(task._id);
+      onComplete(response.data);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to complete task");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleUpdate = (updatedData) => {
-    updateTask(task._id, updatedData)
-      .then((res) => {
-        onComplete(res.data);
-        setIsEditing(false);
-      })
-      .catch((err) => {
-        console.error("Error updating task:", err);
-        alert("Failed to update task.");
-      });
+  const handleUpdate = async (updatedData) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await updateTask(task._id, updatedData);
+      onComplete(response.data);
+      setIsEditing(false);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to update task");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setError(null);
   };
 
   return (
-    <li
-      className={`card ${isEditing ? "editing" : ""}`}
-      style={{
-        textDecoration: task.completed ? "line-through" : "none",
-        listStyle: "none",
-      }}
-    >
+    <li className={`task-card ${task.completed ? "completed" : ""} ${isEditing ? "editing" : ""}`}>
+      {isLoading && <LoadingSpinner overlay small />}
       {!isEditing ? (
         <>
-          <p className="heading">{task.title}</p>
-          <p className="description">
-            Due:{" "}
-            {task.dueDate
-              ? new Date(task.dueDate).toLocaleDateString()
-              : "No due date"}
-          </p>
-          <div className="btn-container">
-            <button onClick={() => onDelete(task._id)} className="btn delete">
-              Delete
-            </button>
+          <div className="task-content">
+            <h3 className="task-title">{task.title}</h3>
+            {task.dueDate && (
+              <p className="task-due-date">
+                <span className="due-date-label">Due:</span>
+                {new Date(task.dueDate).toLocaleDateString()}
+              </p>
+            )}
+            {task.completed && (
+              <div className="completed-badge">Completed</div>
+            )}
+          </div>
+
+          <div className="task-actions">
             {!task.completed && (
-              <button onClick={handleComplete} className="btn complete">
-                Complete
+              <button 
+                onClick={handleComplete} 
+                className="btn complete-btn"
+                disabled={isLoading}
+              >
+                Completed
               </button>
             )}
-            <button onClick={() => setIsEditing(true)} className="btn edit">
+            <button 
+              onClick={() => setIsEditing(true)} 
+              className="btn edit-btn"
+              disabled={isLoading}
+            >
               Edit
+            </button>
+            <button 
+              onClick={() => onDelete(task._id)} 
+              className="btn delete-btn"
+              disabled={isLoading}
+            >
+              Delete
             </button>
           </div>
         </>
       ) : (
-        <TaskForm
-          initialData={task}
-          onSubmit={handleUpdate}
-          onCancel={() => setIsEditing(false)}
-        />
+        <div className="task-edit-form">
+          {error && <ErrorMessage message={error} dismissable onDismiss={() => setError(null)} />}
+          <TaskForm
+            initialData={task}
+            onSubmit={handleUpdate}
+            onCancel={handleCancelEdit}
+            disabled={isLoading}
+          />
+        </div>
       )}
     </li>
   );

@@ -1,0 +1,128 @@
+.signup-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 2rem;
+}
+
+.signup-form {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.signup-form-title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.signup-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.signup-form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.signup-form-group input:focus {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
+.password-strength {
+  margin-top: 0.5rem;
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.strength-meter {
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.password-strength[data-strength="weak"] .strength-meter {
+  width: 33%;
+  background-color: #e74c3c;
+}
+
+.password-strength[data-strength="medium"] .strength-meter {
+  width: 66%;
+  background-color: #f39c12;
+}
+
+.password-strength[data-strength="strong"] .strength-meter {
+  width: 100%;
+  background-color: #27ae60;
+}
+
+.strength-text {
+  display: block;
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin-top: 0.3rem;
+}
+
+.signup-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+  height: 42px;
+}
+
+.signup-button:hover:not(:disabled) {
+  background-color: #219653;
+}
+
+.signup-button:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.signup-link {
+  text-align: center;
+  color: #7f8c8d;
+  margin-top: 1.5rem;
+}
+
+.login-link-text {
+  color: #3498db;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.login-link-text:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .signup-form-container {
+    padding: 1rem;
+  }
+  
+  .signup-form {
+    padding: 1.5rem;
+  }
+}
