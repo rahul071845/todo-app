@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { signupUser } from "../api/userApi";
-import ErrorMessage from "../components/ErrorMessage";
-import LoadingSpinner from "../components/LoadingSpinner";
+import { useAuth } from "../../context/AuthContext";
+import { signupUser } from "../../api/userApi";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
+import { toast } from "react-toastify";
 import "./Signup.css";
 
 function Signup() {
@@ -15,7 +15,6 @@ function Signup() {
   const { setIsAuthenticated } = useAuth();
   const [passwordStrength, setPasswordStrength] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const checkPasswordStrength = (password) => {
@@ -29,7 +28,6 @@ function Signup() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setError("");
 
     if (name === "password") {
       setPasswordStrength(checkPasswordStrength(value));
@@ -39,13 +37,14 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
     try {
       await signupUser(formData);
       setIsAuthenticated(true);
+      toast.success("Signed up succesfully");
       navigate("/tasks");
     } catch (err) {
-      setError(err.response?.data?.error || "Signup failed. Please try again.");
+      const msg = err.response?.data?.error || "Signup failed. Please try again."
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -55,14 +54,6 @@ function Signup() {
     <div className="signup-form-container">
       <form onSubmit={handleSubmit} className="signup-form">
         <h2 className="signup-form-title">Create Account</h2>
-
-        {error && (
-          <ErrorMessage
-            message={error}
-            dismissable
-            onDismiss={() => setError("")}
-          />
-        )}
 
         <div className="signup-form-group">
           <input

@@ -1,17 +1,19 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import AddTask from "./pages/AddTask";
-import ViewTask from "./pages/ViewTask";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
+import Navbar from "./components/Navbar/Navbar";
+import AddTask from "./pages/AddTask/AddTask";
+import ViewTask from "./pages/ViewTask/ViewTask";
+import Login from "./pages/Login/Login";
+import Signup from "./pages/Signup/Signup";
 import PrivateRoute from "./components/PrivateRoute";
-import LandingPage from "./pages/LandingPage";
+import LandingPage from "./pages/LandingPage/LandingPage";
 import "./App.css";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <Router>
       <MainLayout />
+      <ToastContainer position="top-center"/>
     </Router>
   );
 }

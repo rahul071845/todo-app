@@ -1,25 +1,26 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { logoutUser } from "../api/userApi";
-import { useAuth } from "../context/AuthContext.jsx";
-import LoadingSpinner from "./LoadingSpinner";
+import { logoutUser } from "../../api/userApi.js";
+import { useAuth } from "../../context/AuthContext.jsx";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner.jsx";
+import { toast } from "react-toastify";
 import "./Navbar.css";
 
 function Navbar() {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    setError(null);
     try {
       await logoutUser();
       setIsAuthenticated(false);
+      toast.success("Logged out successfully");
       navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Logout failed");
+      const msg = err.response?.data?.message || "Logout failed";
+      toast.error(msg);
     } finally {
       setIsLoggingOut(false);
     }
@@ -52,7 +53,6 @@ function Navbar() {
               <i className="fas fa-sign-out-alt"></i> Logout
             </button>
             {isLoggingOut && <LoadingSpinner overlay />}
-            {error && <span className="nav-error">{error}</span>}
           </>
         ) : (
           <>

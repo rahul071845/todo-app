@@ -1,16 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
-import TaskCard from "../components/TaskCard";
+import TaskCard from "../../components/TaskCard/TaskCard";
 import "./ViewTask.css";
-import TaskFilter from "../components/TaskFilter";
-import { fetchTasks, deleteTask } from "../api/taskApi";
-import TaskSort from "../components/TaskSort";
-import LoadingSpinner from "../components/LoadingSpinner";
-import ErrorMessage from "../components/ErrorMessage";
+import TaskFilter from "../../components/TaskFilter";
+import { fetchTasks, deleteTask } from "../../api/taskApi";
+import TaskSort from "../../components/TaskSort";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
+import { toast } from "react-toastify";
 
 function ViewTask() {
   const [allTasks, setAllTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("createdAtNewest");
 
@@ -24,7 +23,9 @@ function ViewTask() {
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case "dueDate":
-          return new Date(a.dueDate || Infinity) - new Date(b.dueDate || Infinity);
+          return (
+            new Date(a.dueDate || Infinity) - new Date(b.dueDate || Infinity)
+          );
         case "title":
           return a.title.localeCompare(b.title);
         case "completed":
@@ -45,7 +46,8 @@ function ViewTask() {
         const res = await fetchTasks();
         setAllTasks(res.data);
       } catch (err) {
-        setError(err.message || "Failed to load tasks");
+        const msg = err.message || "Failed to load tasks";
+        toast.error(msg);
       } finally {
         setLoading(false);
       }
@@ -54,28 +56,34 @@ function ViewTask() {
   }, []);
 
   const handleDelete = async (taskId) => {
+    setLoading(true);
     try {
       await deleteTask(taskId);
-      setAllTasks(prev => prev.filter(task => task._id !== taskId));
+      setAllTasks((prev) => prev.filter((task) => task._id !== taskId));
+      toast.success("Task deleted successfully");
     } catch (err) {
-      setError(err.message || "Failed to delete task");
+      const msg =
+        err.response?.data?.error || err.message || "Failed to delete task";
+      toast.error(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleComplete = (updatedTask) => {
-    setAllTasks(prev => prev.map(task => 
-      task._id === updatedTask._id ? updatedTask : task
-    ));
+    setAllTasks((prev) =>
+      prev.map((task) => (task._id === updatedTask._id ? updatedTask : task))
+    );
+    toast.info("Task updated");
   };
 
   const filterLabels = {
     all: "All Tasks",
     completed: "Completed Tasks",
-    pending: "Pending Tasks"
+    pending: "Pending Tasks",
   };
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} />;
 
   return (
     <div className="task-view-container">
@@ -87,14 +95,14 @@ function ViewTask() {
           <TaskSort value={sortBy} onChange={setSortBy} />
         </div>
       </div>
-      
+
       <h1 className="task-list-title">{filterLabels[filter]}</h1>
-      
+
       {filteredTasks.length === 0 ? (
         <p className="no-tasks-message">No tasks in this category</p>
       ) : (
         <div className="task-grid">
-          {filteredTasks.map(task => (
+          {filteredTasks.map((task) => (
             <TaskCard
               key={task._id}
               task={task}

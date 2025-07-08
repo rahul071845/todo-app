@@ -1,23 +1,24 @@
 import { useState } from "react";
-import TaskForm from "./TaskForm";
-import { completeTask, updateTask } from "../api/taskApi";
-import LoadingSpinner from "./LoadingSpinner";
-import ErrorMessage from "./ErrorMessage";
+import TaskForm from "../TaskForm/TaskForm";
+import { completeTask, updateTask } from "../../api/taskApi";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 import "./TaskCard.css";
+import ConfirmModal from "../ConfirmModal/ConfirmModal";
+import { toast } from "react-toastify";
 
 function TaskCard({ task, onDelete, onComplete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleComplete = async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await completeTask(task._id);
       onComplete(response.data);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to complete task");
+      const msg = err.response?.data?.message || "Failed to complete task";
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -25,26 +26,30 @@ function TaskCard({ task, onDelete, onComplete }) {
 
   const handleUpdate = async (updatedData) => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await updateTask(task._id, updatedData);
       onComplete(response.data);
       setIsEditing(false);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update task");
+      const msg = err.response?.data?.message || "Failed to complete task";
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-    setError(null);
+  const handleConfirmDelete = () => {
+    onDelete(task._id);
+    setModalOpen(false);
   };
 
   return (
-    <li className={`task-card ${task.completed ? "completed" : ""} ${isEditing ? "editing" : ""}`}>
-      {isLoading && <LoadingSpinner overlay small />}
+    <li
+      className={`task-card ${task.completed ? "completed" : ""} ${
+        isEditing ? "editing" : ""
+      }`}
+    >
+      {isLoading && <LoadingSpinner overlay />}
       {!isEditing ? (
         <>
           <div className="task-content">
@@ -55,44 +60,47 @@ function TaskCard({ task, onDelete, onComplete }) {
                 {new Date(task.dueDate).toLocaleDateString()}
               </p>
             )}
-            {task.completed && (
-              <div className="completed-badge">Completed</div>
-            )}
+            {task.completed && <div className="completed-badge">Completed</div>}
           </div>
 
           <div className="task-actions">
             {!task.completed && (
-              <button 
-                onClick={handleComplete} 
+              <button
+                onClick={handleComplete}
                 className="btn complete-btn"
                 disabled={isLoading}
               >
                 Completed
               </button>
             )}
-            <button 
-              onClick={() => setIsEditing(true)} 
+            <button
+              onClick={() => setIsEditing(true)}
               className="btn edit-btn"
               disabled={isLoading}
             >
               Edit
             </button>
-            <button 
-              onClick={() => onDelete(task._id)} 
+            <button
+              onClick={() => setModalOpen(true)}
               className="btn delete-btn"
               disabled={isLoading}
             >
               Delete
             </button>
+            <ConfirmModal
+              isOpen={modalOpen}
+              onClose={() => setModalOpen(false)}
+              onConfirm={handleConfirmDelete}
+              msg="Are you sure you want to delete this task?"
+            />
           </div>
         </>
       ) : (
         <div className="task-edit-form">
-          {error && <ErrorMessage message={error} dismissable onDismiss={() => setError(null)} />}
           <TaskForm
             initialData={task}
             onSubmit={handleUpdate}
-            onCancel={handleCancelEdit}
+            onCancel={() => setIsEditing(false)}
             disabled={isLoading}
           />
         </div>
