@@ -44,19 +44,14 @@ function Navbar() {
             <NavLink to="/add" end className="nav-link">
               <i className="fas fa-plus"></i> Add Task
             </NavLink>
-            <button 
-              onClick={handleLogout} 
+            <button
+              onClick={handleLogout}
               className="nav-button"
               disabled={isLoggingOut}
             >
-              {isLoggingOut ? (
-                <LoadingSpinner small white />
-              ) : (
-                <>
-                  <i className="fas fa-sign-out-alt"></i> Logout
-                </>
-              )}
+              <i className="fas fa-sign-out-alt"></i> Logout
             </button>
+            {isLoggingOut && <LoadingSpinner overlay />}
             {error && <span className="nav-error">{error}</span>}
           </>
         ) : (
