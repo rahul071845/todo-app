@@ -1,12 +1,13 @@
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import LoadingSpinner from "../components/LoadingSpinner";
 import "./LandingPage.css";
 
 function LandingPage() {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return <div className="loading-spinner">Loading...</div>;
+    return <LoadingSpinner overlay/>;
   }
 
   if (isAuthenticated) {

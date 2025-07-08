@@ -72,9 +72,10 @@ function Login() {
 
         <div className="login-form-group">
           <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? <LoadingSpinner small /> : "Login"}
+            Login
           </button>
         </div>
+        {isLoading && <LoadingSpinner overlay />}
 
         <p className="signup-link">
           Don't have an account?{" "}

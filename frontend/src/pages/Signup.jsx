@@ -28,9 +28,9 @@ function Signup() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     setError("");
-    
+
     if (name === "password") {
       setPasswordStrength(checkPasswordStrength(value));
     }
@@ -55,8 +55,14 @@ function Signup() {
     <div className="signup-form-container">
       <form onSubmit={handleSubmit} className="signup-form">
         <h2 className="signup-form-title">Create Account</h2>
-        
-        {error && <ErrorMessage message={error} dismissable onDismiss={() => setError("")} />}
+
+        {error && (
+          <ErrorMessage
+            message={error}
+            dismissable
+            onDismiss={() => setError("")}
+          />
+        )}
 
         <div className="signup-form-group">
           <input
@@ -94,10 +100,10 @@ function Signup() {
             required
             minLength={6}
           />
-          <div 
-            className="password-strength" 
+          <div
+            className="password-strength"
             data-strength={passwordStrength}
-            aria-label={`Password strength: ${passwordStrength || 'none'}`}
+            aria-label={`Password strength: ${passwordStrength || "none"}`}
           >
             <div className="strength-meter"></div>
             <span className="strength-text">
@@ -107,18 +113,11 @@ function Signup() {
         </div>
 
         <div className="signup-form-group">
-          <button 
-            type="submit" 
-            className="signup-button"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <LoadingSpinner small />
-            ) : (
-              "Sign Up"
-            )}
+          <button type="submit" className="signup-button" disabled={isLoading}>
+            "Sign Up"
           </button>
         </div>
+        {isLoading && <LoadingSpinner overlay />}
 
         <p className="login-link">
           Already have an account?{" "}

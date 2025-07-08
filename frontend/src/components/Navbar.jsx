@@ -25,13 +25,8 @@ function Navbar() {
     }
   };
 
-  // While auth is loading, show a spinner or null
   if (isAuthenticated === null) {
-    return (
-      <div className="navbar-loading">
-        <LoadingSpinner small />
-      </div>
-    );
+    return <LoadingSpinner overlay />;
   }
 
   return (

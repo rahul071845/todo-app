@@ -40,7 +40,7 @@ router.post("/login", (req, res, next) => {
 router.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
-    res.clearCookie("connect.sid"); // remove session cookie
+    res.clearCookie("connect.sid");
     res.status(200).json({ message: "Logged out successfully" });
   });
 });
