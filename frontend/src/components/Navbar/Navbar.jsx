@@ -3,16 +3,19 @@ import { useState } from "react";
 import { logoutUser } from "../../api/userApi.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner.jsx";
+import ConfirmModal from "../ConfirmModal/ConfirmModal.jsx";
 import { toast } from "react-toastify";
 import "./Navbar.css";
 
 function Navbar() {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
+    setModalOpen(false);
     try {
       await logoutUser();
       setIsAuthenticated(false);
@@ -46,12 +49,18 @@ function Navbar() {
               <i className="fas fa-plus"></i> Add Task
             </NavLink>
             <button
-              onClick={handleLogout}
+              onClick={() => setModalOpen(true)}
               className="nav-button"
               disabled={isLoggingOut}
             >
               <i className="fas fa-sign-out-alt"></i> Logout
             </button>
+            <ConfirmModal
+              isOpen={modalOpen}
+              msg={"Do you want to log out?"}
+              onConfirm={handleLogout}
+              onClose={() => setModalOpen(false)}
+            />
             {isLoggingOut && <LoadingSpinner overlay />}
           </>
         ) : (
